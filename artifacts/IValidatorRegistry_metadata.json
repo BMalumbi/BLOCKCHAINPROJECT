@@ -1,0 +1,83 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_validator",
+						"type": "address"
+					}
+				],
+				"name": "isCertifiedValidator",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_validator",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "_successful",
+						"type": "bool"
+					}
+				],
+				"name": "recordValidation",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/DiasporaRemitEscrow.sol": "IValidatorRegistry"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/DiasporaRemitEscrow.sol": {
+			"keccak256": "0xb8313496328b4a4de09e874078f247cfb231e2b80b33ccf18ef008742445d7b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b24e38d819167ca20eb8a838aa85502e3b438e125bf5615cf77530048f044411",
+				"dweb:/ipfs/QmQhE6WWogLk17L1xEBBdmSZ3m9mUXQfmb5z8TzYdgAQ1u"
+			]
+		}
+	},
+	"version": 1
+}
