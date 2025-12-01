@@ -5,15 +5,15 @@
 ```
 SEPOLIA TESTNET - DÉPLOIEMENT DiasporaRemit
 ================================================
-DiasporaUserRegistry:       0x3ed93312222ecc25A5BD539d93B29b34a9ceb5f2
-DiasporaValidatorRegistry:  0x831a24D733F1Ea754cC4554c6fb37A733A1Faaf7
-DiasporaRemitEscrow:        0x09963A973481F13c49eBCeF833Cf298e8EDf887C
+DiasporaUserRegistry:       0xBAF6D6d666D8B750a1e6aCe54c7C4d58a4e28aaf
+DiasporaValidatorRegistry:  0xBAF6D6d666D8B750a1e6aCe54c7C4d58a4e28aaf
+DiasporaRemitEscrow:        0x61Ce4c7e227dC87D8154549902A07db5C0F9608e
 
 COMPTES TEST
 ================================================
-Ronny (Expéditeur):   0x80eda673bcd9daa173c3a88206377515517c7ea0
-Grâce (Bénéficiaire): 0xe9184d1618a106174a38062c428bfe186a4a6610
-UNIKIN (Validateur):  0xb5d1ecb769d119b0129e5031afb27ff625e75113
+Ronny (Expéditeur):   0x6220751aC9897D6508c07a9bd571a9a246756a4C
+Grâce (Bénéficiaire): 0xa9F1Dd55BB791F55d5E7241fC56f650952433d9d
+UNIKIN (Validateur):  0x6220751aC9897D6508c07a9bd571a9a246756a4C
 ```
 
 ---
@@ -21,12 +21,12 @@ UNIKIN (Validateur):  0xb5d1ecb769d119b0129e5031afb27ff625e75113
 ## ✅ ÉTAPES DÉJÀ COMPLÉTÉES
 
 - [x] 3 contrats compilés et déployés sur Sepolia
-- [x] Contrats connectés entre eux (setUserRegistry, setValidatorRegistry, setMainContract)
 - [x] Ronny enregistré comme utilisateur
 - [x] UNIKIN enregistré et certifié comme validateur
-- [x] **Transfert créé et financé avec 0.005 ETH** ✅
-- [x] **UNIKIN a validé le transfert** ✅
-- [x] **Grâce a retiré les fonds** ✅
+- [ ] Contrats connectés entre eux (setUserRegistry, setValidatorRegistry, setMainContract)
+- [ ] **Transfert à créer**
+- [ ] **Validation par UNIKIN**
+- [ ] **Retrait des fonds par Grâce**
 
 ---
 
@@ -134,10 +134,10 @@ UNIKIN (Validateur):  0xb5d1ecb769d119b0129e5031afb27ff625e75113
 
 1. Onglet **"Deploy & Run Transactions"**
 2. **ENVIRONMENT** : `Injected Provider - MetaMask` (Sepolia)
-3. **ACCOUNT** : Ronny (0x80eda673...)
+3. **ACCOUNT** : Ronny (0x6220751aC...)
 4. **CONTRACT** : `DiasporaUserRegistry`
 5. **Deploy** → Confirmer dans MetaMask
-6. **Noter l'adresse** : `0x3ed93312222ecc25A5BD539d93B29b34a9ceb5f2`
+6. **Noter l'adresse déployée**
 
 #### 1.3 Déployer DiasporaValidatorRegistry
 
@@ -160,24 +160,24 @@ UNIKIN (Validateur):  0xb5d1ecb769d119b0129e5031afb27ff625e75113
 Dans le contrat **DiasporaRemitEscrow** déployé :
 
 1. **setUserRegistry**
-   - Paramètre : `0x3ed93312222ecc25A5BD539d93B29b34a9ceb5f2`
+   - Paramètre : `[Adresse de votre DiasporaUserRegistry déployé]`
    - Transact → Confirmer
 
 2. **setValidatorRegistry**
-   - Paramètre : `0x831a24D733F1Ea754cC4554c6fb37A733A1Faaf7`
+   - Paramètre : `[Adresse de votre DiasporaValidatorRegistry déployé]`
    - Transact → Confirmer
 
-#### 2.2 Connecter les registres au contrat principal
+#### 2.2 Connecter le UserRegistry au contrat principal
 
 Dans **DiasporaUserRegistry** :
 - **setMainContract**
-  - Paramètre : `0x09963A973481F13c49eBCeF833Cf298e8EDf887C`
+  - Paramètre : `[Adresse de votre DiasporaRemitEscrow déployé]`
   - Transact → Confirmer
 
-Dans **DiasporaValidatorRegistry** :
-- **setMainContract**
-  - Paramètre : `0x09963A973481F13c49eBCeF833Cf298e8EDf887C`
-  - Transact → Confirmer
+**⚠️ IMPORTANT** : 
+- DiasporaValidatorRegistry **n'a pas** de fonction `setMainContract`
+- La fonction `recordValidation()` peut être appelée par n'importe quelle adresse
+- Aucune configuration supplémentaire n'est nécessaire pour le ValidatorRegistry
 
 ---
 
@@ -297,11 +297,21 @@ Dans Remix, contrat **DiasporaRemitEscrow** :
 
 ### ÉTAPE 3 : GRÂCE RETIRE LES FONDS
 
+**⚠️ CRITIQUE** : Avant de retirer, vérifiez l'adresse du recipient dans le transfert !
+
+#### 3.0 Vérifier le recipient du transfert
+
+1. Dans **DiasporaRemitEscrow**, cliquer sur `getTransfer`
+2. Entrer `_transferId: 0`
+3. **Noter l'adresse `recipient`** affichée
+4. **C'est CETTE adresse exacte** qui doit appeler `withdrawFunds`
+
 #### 3.1 Changer de compte vers Grâce
 
 1. **Ouvrir MetaMask**
-2. **Sélectionner** : Compte Grâce (0xe9184d1618a106174a38062c428bfe186a4a6610)
+2. **Sélectionner** : Le compte dont l'adresse correspond **exactement** au `recipient`
 3. **Vérifier** que le réseau est **Sepolia**
+4. **Vérifier dans Remix** : L'adresse affichée dans ACCOUNT doit être identique au `recipient`
 
 #### 3.2 Retirer les fonds
 
@@ -423,16 +433,17 @@ Dans **DiasporaRemitEscrow** :
 
 1. **Revenir au compte Ronny** dans MetaMask
 2. Dans **DiasporaRemitEscrow**, fonction `createAndFundTransfer`
-3. Paramètres (exemple) :
+3. **⚠️ IMPORTANT** : Vérifiez bien l'adresse du recipient (Grâce) avant de créer le transfert !
+4. Paramètres (exemple) :
    ```
-   _recipient: 0xe9184d1618a106174a38062c428bfe186a4a6610
-   _validator: 0xb5d1ecb769d119b0129e5031afb27ff625e75113
+   _recipient: [Adresse exacte du compte Grâce dans MetaMask]
+   _validator: [Adresse du validateur UNIKIN]
    _purpose: Aide médicale urgente
    _deadlineSeconds: 259200 (3 jours)
    ```
-4. **VALUE** : `0.002` Ether
-5. **Transact** → Confirmer dans MetaMask
-6. **Ce sera le Transfer ID 1** (car totalTransfers = 2)
+5. **VALUE** : `0.002` Ether
+6. **Transact** → Confirmer dans MetaMask
+7. **Vérifier immédiatement** avec `getTransfer` que le recipient est correct !
 
 Puis répéter les étapes de validation et retrait avec `_transferId: 1`.
 
@@ -500,6 +511,12 @@ Puis répéter les étapes de validation et retrait avec `_transferId: 1`.
 2. **Vérifier le statut** : Le transfert est-il dans le bon état ?
 3. **Vérifier le gas** : Avez-vous assez d'ETH Sepolia ?
 4. **Regarder l'erreur** : Remix affiche le message d'erreur du smart contract
+
+**Erreurs courantes** :
+- `Only owner` : Vous devez être connecté avec le compte propriétaire (Ronny)
+- `NotRecipient` (0x8e4a23d6) : Vous essayez de retirer avec le mauvais compte
+- `InvalidStatus` : Le transfert n'est pas dans le bon état (Funded → Validated → Completed)
+- `DeadlinePassed` : Le délai est expiré, utilisez `refundTransfer` à la place
 
 ### Si vous n'avez plus assez d'ETH Sepolia
 
